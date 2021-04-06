@@ -74,7 +74,7 @@ public class Main extends Script {
                 }.sleep();
             } if(bank.isOpen()) {
                 if(bank.withdraw("Small fishing net", 1)) {
-                    new ConditionalSleep(25000) {
+                    new ConditionalSleep(5000) {
                         @Override
                         public boolean condition() {
                             return bank.withdraw("Small fishing net", 1);
