@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="snootsAnchovyFishingBot">
+    <output-path>$USER_HOME$/OSBot/Scripts</output-path>
+    <root id="archive" name="snootsAnchovyFishingBot.jar">
+      <element id="module-output" name="runescapeAnchovyFishingBot" />
+    </root>
+  </artifact>
+</component>

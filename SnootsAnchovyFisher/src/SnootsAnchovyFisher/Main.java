@@ -40,7 +40,7 @@ public class Main extends Script {
             } else if(!getDialogues().inDialogue()) {
                 if(anchovyFish != null) {
                     if(!myPlayer().isInteracting(anchovyFish)) {
-                        if(anchovyFish.interact("Small Net")) {
+                        if(anchovyFish.interact("Small fishing Net")) {
                             sleep(random(5000, 1000));
                             new ConditionalSleep(25000) {
                                 @Override
@@ -55,6 +55,43 @@ public class Main extends Script {
         //If bot is not at the fishing area, then walk towards the fishing area
         } else if(!fishingArea.contains(myPlayer())) {
             walking.webWalk(fishingArea);
+        }
+    }
+
+    // @NAME: Withdraw small fishing net
+    // @DESCRIPTION: Withdraws the small fishing net from the bank
+    public void bankWithdrawSmallFishingNet() {
+        NPC banker = getNpcs().closest("Banker");
+
+        //If bank area contains player, withdraw 1 small fishing net
+        if(bankArea.contains(myPlayer())) {
+            if(banker.interact("Bank")) {
+                new ConditionalSleep(25000) {
+                    @Override
+                    public boolean condition() {
+                        return bank.isOpen() == true;
+                    }
+                }.sleep();
+            } if(bank.isOpen()) {
+                if(bank.withdraw("Small fishing net", 1)) {
+                    new ConditionalSleep(25000) {
+                        @Override
+                        public boolean condition() {
+                            return bank.withdraw("Small fishing net", 1);
+                        }
+                    }.sleep();
+                } if(bank.close()) {
+                    new ConditionalSleep(25000) {
+                        @Override
+                        public boolean condition() {
+                            return bank.close();
+                        }
+                    }.sleep();
+                }
+            }
+        //if bank area does not contain player, walk to the area
+        } else if(!bankArea.contains(myPlayer())) {
+            walking.webWalk(bankArea);
         }
     }
 
@@ -121,7 +158,7 @@ public class Main extends Script {
                 new ConditionalSleep(25000) {
                     @Override
                     public boolean condition() {
-                        return bank.isOpen();
+                        return bank.isOpen() == true;
                     }
                 }.sleep();
             } if(bank.isOpen()) {
@@ -189,7 +226,7 @@ public class Main extends Script {
                 new ConditionalSleep(25000) {
                     @Override
                     public boolean condition() {
-                        return bank.isOpen();
+                        return bank.isOpen() == true;
                     }
                 }.sleep();
             } if(bank.isOpen()) {
@@ -231,10 +268,12 @@ public class Main extends Script {
     // @DESCRIPTION: Script loops whatever is inside this method
     @Override
     public int onLoop() throws InterruptedException {
-        if(!getInventory().isFull() && isFishing == true) {
+        if(!getInventory().isFull() && getInventory().contains("Small fishing net") && isFishing == true) {
             fishingFunction();
         } else if(getInventory().isFull() && isFishing == true) {
             bankDepositFish();
+        } else if(!getInventory().isFull() && !getInventory().contains("Small fishing net") && isFishing == true) {
+            bankWithdrawSmallFishingNet();
         } else if(!getInventory().contains("Raw anchovies") && !getInventory().contains("Anchovies") && isFishing == false) {
             bankWithdrawAnchovies();
         } else if(getInventory().contains("Raw anchovies") && isFishing == false) {
@@ -242,7 +281,7 @@ public class Main extends Script {
         } else if(getInventory().contains("Anchovies") && !getInventory().contains("Raw anchovies") && isFishing == false) {
             bankDepositAnchovies();
         } else if(!bank.contains("Raw anchovies") && isFishing == false) {
-            log("No raw anchovies to deposit!");
+            log("No raw anchovies to withdraw!");
         }
 
         return 1000;
