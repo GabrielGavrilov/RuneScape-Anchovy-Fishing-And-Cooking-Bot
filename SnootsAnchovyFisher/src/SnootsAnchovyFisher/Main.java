@@ -15,14 +15,15 @@ import org.osbot.rs07.utility.ConditionalSleep;
 
 public class Main extends Script {
 
+    private GUI gui = new GUI();
+    public String option = "";
+    Object lock = new Object();
+
     // @NAME: Areas
     // @DESCRIPTION: All the areas we will be using
     private Area fishingArea = new Area(3266, 3149, 3278, 3139);
     private Area bankArea = new Area(3271, 3161, 3269, 3173);
     private Area cookingArea = new Area(3271, 3179, 3274, 3182);
-
-    //This boolean determines if the player has chosen the fishing option or not
-    static boolean isFishing;
 
     ////////////////////////////////////////////////////////////////
     //                   Fishing for Anchovies                   //
@@ -40,7 +41,7 @@ public class Main extends Script {
             } else if(!getDialogues().inDialogue()) {
                 if(anchovyFish != null) {
                     if(!myPlayer().isInteracting(anchovyFish)) {
-                        if(anchovyFish.interact("Small fishing Net")) {
+                        if(anchovyFish.interact("Small Net")) {
                             sleep(random(5000, 1000));
                             new ConditionalSleep(25000) {
                                 @Override
@@ -163,14 +164,14 @@ public class Main extends Script {
                 }.sleep();
             } if(bank.isOpen()) {
                 if(bank.withdrawAll("Raw anchovies")) {
-                    new ConditionalSleep(25000) {
+                    new ConditionalSleep(5000) {
                         @Override
                         public boolean condition() {
-                            return bank.withdrawAll("Raw anchovies");
+                            return getInventory().contains("Raw anchovies");
                         }
                     }.sleep();
                 } if(bank.close()) {
-                    new ConditionalSleep(25000) {
+                    new ConditionalSleep(5000) {
                         @Override
                         public boolean condition() {
                             return bank.close();
@@ -260,7 +261,7 @@ public class Main extends Script {
     // @DESCRIPTION: Script gets executed once everytime the bot starts
     @Override
     public void onStart() {
-        isFishing = true;
+        gui.run(this);
         log("'Snoots' Anchovy fishing & cooking' has been started.");
     }
 
@@ -268,19 +269,19 @@ public class Main extends Script {
     // @DESCRIPTION: Script loops whatever is inside this method
     @Override
     public int onLoop() throws InterruptedException {
-        if(!getInventory().isFull() && getInventory().contains("Small fishing net") && isFishing == true) {
+        if(!getInventory().isFull() && getInventory().contains("Small fishing net") && option.equals("Fish Anchovies")) {
             fishingFunction();
-        } else if(getInventory().isFull() && isFishing == true) {
+        } else if(getInventory().isFull() && option.equals("Fish Anchovies")) {
             bankDepositFish();
-        } else if(!getInventory().isFull() && !getInventory().contains("Small fishing net") && isFishing == true) {
+        } else if(!getInventory().isFull() && !getInventory().contains("Small fishing net") && option.equals("Fish Anchovies")) {
             bankWithdrawSmallFishingNet();
-        } else if(!getInventory().contains("Raw anchovies") && !getInventory().contains("Anchovies") && isFishing == false) {
+        } else if(!getInventory().contains("Raw anchovies") && !getInventory().contains("Anchovies") && option.equals("Cook Anchovies")) {
             bankWithdrawAnchovies();
-        } else if(getInventory().contains("Raw anchovies") && isFishing == false) {
+        } else if(getInventory().contains("Raw anchovies") && option.equals("Cook Anchovies")) {
             cookAnchovies();
-        } else if(getInventory().contains("Anchovies") && !getInventory().contains("Raw anchovies") && isFishing == false) {
+        } else if(getInventory().contains("Anchovies") && !getInventory().contains("Raw anchovies") && option.equals("Cook Anchovies")) {
             bankDepositAnchovies();
-        } else if(!bank.contains("Raw anchovies") && isFishing == false) {
+        } else if(!bank.contains("Raw anchovies") && option.equals("Cook Anchovies")) {
             log("No raw anchovies to withdraw!");
         }
 
