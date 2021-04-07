@@ -15,8 +15,13 @@ import org.osbot.rs07.utility.ConditionalSleep;
 
 public class Main extends Script {
 
+    //Puts the GUI class into an object
     private GUI gui = new GUI();
+
+    //Creates and sets the option string to null
     public String option = "";
+
+    //not even sure if this works ¯\_(:|)_/¯
     Object lock = new Object();
 
     // @NAME: Areas
