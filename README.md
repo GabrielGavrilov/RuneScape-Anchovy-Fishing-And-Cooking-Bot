@@ -1,4 +1,4 @@
-#Snoots' Anchovy Fishing & Cooking Bot
+# Snoots' Anchovy Fishing & Cooking Bot
 
 This is a simple Old School RuneScape bot that fishes and cooks anchovies.
 Just tell the bot what you want it to do, and watch the magic happen!
